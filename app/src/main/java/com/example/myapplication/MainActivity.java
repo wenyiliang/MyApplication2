@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -42,7 +43,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
     private TrafficHelper helper;
     private List<TrafficInfo> trafficInfos;
-    private TrafficInfoAdapter adapter;
+//    private TrafficInfoAdapter adapter;
     private NetworkStatsManager networkStatsManager;
     private long nowTotal=0;
     private long lastTotal=0;
@@ -118,14 +119,18 @@ public class MainActivity extends AppCompatActivity {
         NetworkStats.Bucket bucket = null;
         NetworkStats.Bucket bucket2 = null;
         TextView textView = (TextView) findViewById(R.id.view1);
+        TextView textView_rx = (TextView) findViewById(R.id.view1_rx);
+        TextView textView_tx = (TextView) findViewById(R.id.view1_tx);
         TextView textView2 = (TextView) findViewById(R.id.view2);
+        TextView textView2_rx = (TextView) findViewById(R.id.view2_rx);
+        TextView textView2_tx = (TextView) findViewById(R.id.view2_tx);
         TextView textView3 = (TextView) findViewById(R.id.speed);
         ListView listview = (ListView) findViewById(R.id.list);
         speed=(TextView)findViewById(R.id.speed);
         helper = new TrafficHelper(this);
         trafficInfos = helper.getInternetTrafficInfos();
-        adapter = new TrafficInfoAdapter(this, R.layout.content, trafficInfos);
-        listview.setAdapter(adapter);
+//        adapter = new TrafficInfoAdapter(this, R.layout.content, trafficInfos);
+//        listview.setAdapter(adapter);
         TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -149,9 +154,15 @@ public class MainActivity extends AppCompatActivity {
             String rx = fileSizeConver(bucket2.getRxBytes());
             String tx = fileSizeConver(bucket2.getTxBytes());
             String total = fileSizeConver(bucket2.getRxBytes() + bucket2.getTxBytes());
-            textView.setText("wifi使用的流量: " + total1 + "wifi使用的下载流量: " + rx1 + "wifi使用的上传流量: " + tx1);
+//            textView.setText("wifi使用的流量: " + total1 + "wifi使用的下载流量: " + rx1 + "wifi使用的上传流量: " + tx1);
+            textView.setText(total1);
+            textView_tx.setText(tx1);
+            textView_rx.setText(rx1);
+            textView2.setText(total);
+            textView2_tx.setText(tx);
+            textView2_rx.setText(rx);
 //            textView.setText("wifi使用的下载流量: " + bucket2.getRxBytes() + "wifi使用的上传流量: "+ bucket2.getTxBytes());
-            textView2.setText("手机使用的流量: " + total + "手机使用的下载流量 " + rx + "手机使用的上传流量: " + tx);
+//            textView2.setText("手机使用的流量: " + total + "手机使用的下载流量 " + rx + "手机使用的上传流量: " + tx);
             Log.i("Info", "Total: " + (bucket.getRxBytes() + bucket.getTxBytes()));
         } catch (RemoteException e) {
 
@@ -169,7 +180,24 @@ public class MainActivity extends AppCompatActivity {
         lastTime=System.currentTimeMillis();
         timer = new Timer();
         timer.schedule(timerTask, 1000,2000);
-        
+
+
+        Button button=(Button)findViewById(R.id.btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =new Intent(MainActivity.this,WifiActivity.class);
+                startActivity(intent);
+            }
+        });
+        Button button_app=(Button)findViewById(R.id.btn_app);
+        button_app.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =new Intent(MainActivity.this,WifiAppActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private boolean hasPermissionToReadNetworkStats() {
